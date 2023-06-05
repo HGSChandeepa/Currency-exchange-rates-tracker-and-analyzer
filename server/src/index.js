@@ -4,6 +4,11 @@ const axios = require("axios");
 
 const app = express();
 
+// Config
+require("dotenv").config();
+
+console.log(process.env.APP_ID);
+
 // Middleware
 app.use(express.json());
 app.use(cors());
@@ -13,7 +18,7 @@ app.get("/convert", async (req, res) => {
   const { date, sourceCurrency, targetCurrency, amountInSourceCurrency } =
     req.query;
 
-  const currencyURL = `https://openexchangerates.org/api/historical/${date}.json?${process.env.APP_ID}`;
+  const currencyURL = `https://openexchangerates.org/api/historical/${date}.json?app_id=${process.env.APP_ID}`;
   const namesURl = `https://openexchangerates.org/api/currencies.json?app_id=${process.env.APP_ID}`;
   try {
     const response = await axios.get(currencyURL);
