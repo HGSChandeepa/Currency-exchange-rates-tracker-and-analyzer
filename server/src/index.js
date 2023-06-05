@@ -44,6 +44,7 @@ app.get("/convert", async (req, res) => {
     //get the names of the currencies
     const namesResponse = await axios.get(namesURl);
     const namesData = namesResponse.data;
+
     //sourceCurrency name
     const sourceCurrencyName = namesData[sourceCurrency];
     //targetCurrency name
@@ -60,6 +61,19 @@ app.get("/convert", async (req, res) => {
       sourceCurrencyName,
       targetCurrencyName,
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+//all currences
+app.get("/getAllCurrencies", async (req, res) => {
+  const namesURl = `https://openexchangerates.org/api/currencies.json?app_id=${process.env.APP_ID}`;
+  try {
+    const namesResponse = await axios.get(namesURl);
+    const namesData = namesResponse.data;
+
+    return res.json(namesData);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred" });

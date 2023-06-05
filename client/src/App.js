@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 function App() {
@@ -11,7 +11,23 @@ function App() {
   const [amountInTargetCurrency, setamountInTargetCurrency] = useState(0);
   const [sourceCurrencyName, setsourceCurrencyName] = useState("");
   const [targetCurrencyName, settargetCurrencyName] = useState("");
+  const [currencyNames, setcurrencyNames] = useState([]);
   const [pressed, setPressed] = useState(false);
+
+  //get all the currencies
+  useEffect(() => {
+    const getTheCurrencies = async () => {
+      try {
+        const responce = await axios.get(
+          "http://localhost:5000/getAllCurrencies"
+        );
+        setcurrencyNames(responce.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getTheCurrencies();
+  }, []);
 
   // onSubmit
   const getTheTargetAmount = async (event) => {
@@ -41,17 +57,17 @@ function App() {
 
   return (
     <div>
-      <h1 className=" text-5xl font-black flex items-center justify-normal text-green-500">
+      <h1 className="lg:mx-32  text-5xl font-black flex items-center justify-normal text-green-500">
         Convert Your Currencies Today
       </h1>
-      <p className=" font-sm opacity-40 py-6">
+      <p className="lg:mx-32 font-sm opacity-40 py-6">
         Welcome to "Convert Your Currencies Today"! This application allows you
         to easily convert currencies based on the latest exchange rates. Whether
         you're planning a trip, managing your finances, or simply curious about
         the value of your money in different currencies, this tool is here to
         help.
       </p>
-      <div className=" flex items-center justify-center flex-col">
+      <div className=" mt-5 flex items-center justify-center flex-col">
         <section className="w-full lg:w-1/2">
           <form onSubmit={getTheTargetAmount}>
             <div className="mb-4">
@@ -79,17 +95,22 @@ function App() {
               >
                 Source Currency
               </label>
-              <input
-                required
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                onChange={(e) =>
-                  setsourceCurrency(e.target.value.toUpperCase())
-                }
-                type="text"
+
+              <select
+                value={sourceCurrency} // Set the selected value
+                onChange={(e) => setsourceCurrency(e.target.value)}
+                className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
                 name="sourceCurrency"
                 id="sourceCurrency"
-                placeholder="Source Currency..."
-              />
+              >
+                <option value="">Select source currency</option>{" "}
+                {/* Default empty option */}
+                {Object.keys(currencyNames).map((currency) => (
+                  <option className=" p-1" key={currency} value={currency}>
+                    {currencyNames[currency]}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="mb-4">
@@ -99,17 +120,21 @@ function App() {
               >
                 Target Currency
               </label>
-              <input
-                required
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                onChange={(e) =>
-                  settargetCurrency(e.target.value.toUpperCase())
-                }
-                type="text"
-                name="targetCurrency"
-                id="targetCurrency"
-                placeholder="target Currency..."
-              />
+              <select
+                value={targetCurrency} // Set the selected value
+                onChange={(e) => settargetCurrency(e.target.value)}
+                className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
+                name="sourceCurrency"
+                id="sourceCurrency"
+              >
+                <option value="">Select target currency</option>{" "}
+                {/* Default empty option */}
+                {Object.keys(currencyNames).map((currency) => (
+                  <option className=" p-1" key={currency} value={currency}>
+                    {currencyNames[currency]}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="mb-4">
